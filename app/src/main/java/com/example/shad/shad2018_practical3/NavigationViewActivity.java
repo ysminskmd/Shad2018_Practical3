@@ -1,9 +1,11 @@
 package com.example.shad.shad2018_practical3;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
+import android.support.annotation.NonNull;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -14,6 +16,13 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.example.shad.shad2018_practical3.launcher.LauncherAdapter;
+import com.example.shad.shad2018_practical3.launcher.OffsetItemDecoration;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
+
 public class NavigationViewActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
@@ -23,15 +32,6 @@ public class NavigationViewActivity extends AppCompatActivity
         setContentView(R.layout.activity_navigation_view);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -50,6 +50,35 @@ public class NavigationViewActivity extends AppCompatActivity
                 startActivity(new Intent(v.getContext(), ScrollingActivity.class));
             }
         });
+
+        createGridLayout();
+    }
+
+    private void createGridLayout() {
+        final RecyclerView recyclerView = findViewById(R.id.louncher_content);
+        recyclerView.setHasFixedSize(true);
+        final int offset = getResources().getDimensionPixelSize(R.dimen.item_offset);
+        recyclerView.addItemDecoration(new OffsetItemDecoration(offset));
+
+        final int spanCount = getResources().getInteger(R.integer.span_count);
+        final GridLayoutManager layoutManager = new GridLayoutManager(this, spanCount);
+        recyclerView.setLayoutManager(layoutManager);
+
+        final List<Integer> data = generateData();
+        final LauncherAdapter launcherAdapter = new LauncherAdapter(data);
+        recyclerView.setAdapter(launcherAdapter);
+    }
+
+    @NonNull
+    private List<Integer> generateData() {
+        final List<Integer> colors = new ArrayList<>();
+        final Random rnd = new Random();
+        for (int i = 0; i < 1000; i++) {
+            int color = Color.argb(255, rnd.nextInt(256), rnd.nextInt(256), rnd.nextInt(256));
+            colors.add(color);
+        }
+
+        return colors;
     }
 
     @Override
